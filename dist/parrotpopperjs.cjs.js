@@ -91,6 +91,7 @@ function popperGenerator(generatorOptions = {}) {
             modifiersData: {}
         };
         let effectCleanupFns = [];
+        let isDestroyed = false;
         const instance = {
             state,
             setOptions(options) {
@@ -116,7 +117,14 @@ function popperGenerator(generatorOptions = {}) {
                     resolve(state);
                 });
             },
+            destroy() {
+                cleanupModifierEffects();
+                isDestroyed = true;
+            },
             forceUpdate() {
+                if (isDestroyed) {
+                    return;
+                }
                 const { reference, popper } = state.elements;
                 //如果reference和popper不是合法节点就不处理
                 if (!areValidElements(reference, popper)) {
@@ -143,7 +151,7 @@ function popperGenerator(generatorOptions = {}) {
             }
         };
         instance.setOptions(options).then((state) => {
-            if (options.onFirstUpdate) {
+            if (!isDestroyed && options.onFirstUpdate) {
                 options.onFirstUpdate(state);
             }
         });

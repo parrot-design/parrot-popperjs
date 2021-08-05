@@ -76,6 +76,10 @@ export function popperGenerator(generatorOptions: PopperGeneratorArgs = {}) {
                     resolve(state);
                 })
             },
+            destroy(){
+                cleanupModifierEffects();
+                isDestroyed = true;
+            },
             forceUpdate() {
                 if (isDestroyed) {
                     return;

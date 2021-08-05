@@ -7,6 +7,7 @@ export declare function popperGenerator(generatorOptions?: PopperGeneratorArgs):
     state: ICreatePopperState;
     setOptions(options: ICreatePopperOptions): Promise<unknown>;
     update(): Promise<unknown>;
+    destroy(): void;
     forceUpdate(): void;
 };
 export {};
