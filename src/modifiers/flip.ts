@@ -26,8 +26,7 @@ function flip({ state, options, name }:any) {
  
   if (state.modifiersData[name]._skip) {
     return;
-  }
-  console.log("flip",state)
+  } 
   const {
     mainAxis: checkMainAxis = true,
     altAxis: checkAltAxis = true,

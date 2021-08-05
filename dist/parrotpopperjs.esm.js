@@ -476,7 +476,6 @@ function flip({ state, options, name }) {
     if (state.modifiersData[name]._skip) {
         return;
     }
-    console.log("flip", state);
     const { mainAxis: checkMainAxis = true, altAxis: checkAltAxis = true, fallbackPlacements: specifiedFallbackPlacements, padding, boundary, rootBoundary, altBoundary, flipVariations = true, allowedAutoPlacements, } = options;
     const preferredPlacement = state.options.placement;
     const basePlacement = getBasePlacement(preferredPlacement);
