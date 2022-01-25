@@ -25,11 +25,6 @@
   },
   "homepage": "https://github.com/parrot-design/parrot-mini-axios#readme",
   "devDependencies": {
-    "@material-ui/core": "^4.12.2",
-    "@parrotjs/rc-helper-class": "0.0.2",
-    "@popperjs/core": "^2.9.2",
-    "@types/react": "^17.0.14",
-    "@types/react-dom": "^17.0.9",
     "css-loader": "^6.2.0",
     "express": "^4.17.1",
     "husky": "^7.0.1",
@@ -52,6 +47,6 @@
     "webpack-hot-middleware": "^2.25.0"
   },
   "dependencies": {
-    "@parrotjs/dom-utils": "0.0.9"
+    "@popperjs/core": "^2.11.2"
   }
 }
