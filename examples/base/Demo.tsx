@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { createPopper } from '../../src';
-//import { createPopper } from '@popperjs/core';
+//import { createPopper } from '../../src';
+import { createPopper } from '@popperjs/core';
 
 export default function Demo() {
 
@@ -17,9 +17,7 @@ export default function Demo() {
             <div style={{ paddingTop: 200, paddingLeft: 200 }}>
                 <button ref={buttonRef}>我只是一个按钮</button>
                 <div ref={tooltipRef} style={{whiteSpace:'nowrap'}}>
-                    我只是一个tooltip我只是一个tooltip我只是一个tooltip我只是一个tooltip
-                    我只是一个tooltip我只是一个tooltip我只是一个tooltip我只是一个tooltip
-                    我只是一个tooltip我只是一个tooltip我只是一个tooltip我只是一个tooltip
+                我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是我只是
                 </div>
             </div>
         </div >

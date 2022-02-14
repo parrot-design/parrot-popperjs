@@ -1,5 +1,7 @@
 //定位是否根据HTML元素 默认不是
 export default function getAbsoluteStyle(referceRect: DOMRect, popperRect: DOMRect, parentRect?: DOMRect) {
+
+    
   
     let {
         x: referceX,
@@ -8,12 +10,16 @@ export default function getAbsoluteStyle(referceRect: DOMRect, popperRect: DOMRe
         width: referceWidth
     } = referceRect;
 
+    
+
     let {
         x: popperX,
         y: popperY,
         bottom: popperBottom,
         width: popperWidth
     } = popperRect;
+    
+    console.log("==popperWidth==",popperWidth)
 
     let {
         x: parentX,
