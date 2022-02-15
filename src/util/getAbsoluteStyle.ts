@@ -18,7 +18,7 @@ export default function getAbsoluteStyle(referceRect: DOMRect, popperRect: DOMRe
         bottom: popperBottom,
         width: popperWidth
     } = popperRect;
-    
+
     console.log("==popperWidth==",popperWidth)
 
     let {
@@ -35,7 +35,7 @@ export default function getAbsoluteStyle(referceRect: DOMRect, popperRect: DOMRe
 
     return `
         position:absolute;
-        inset:0 auto auto 0;
+        inset:0 auto auto 0; 
         transform:translate(${translateX}px,${translateY}px)
     `
 }

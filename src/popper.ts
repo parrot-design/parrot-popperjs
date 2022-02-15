@@ -12,9 +12,9 @@ export function createPopper(reference:HTMLElement,popper:HTMLElement){
         throw new Error("this secord argument must be a element");
     }
     //先设置absolute 便于正确计算元素宽度 absolute元素具有包裹性 
-    //popper.setAttribute('style','position:absolute;');
+    popper.setAttribute('style','position:absolute;');
     //由于absolute包含块的影响 popper元素的宽度将和他的包含块保持一致 会影响逻辑判断 包含块是第一个不为static的父元素
-    // popper.setAttribute('style','width:max-content');
+    popper.setAttribute('style','width:max-content');
 
     //获取元素
     const parent=hasNotStaticPosition(popper);
@@ -22,10 +22,7 @@ export function createPopper(reference:HTMLElement,popper:HTMLElement){
 
     //rect
     const referenceRect=getBoundingClientRect(reference); 
-    const popperRect=getBoundingClientRect(popper);  
-
-    console.log("===popper===",getComputedStyle(popper)) 
-
+    const popperRect=getBoundingClientRect(popper);   
     if(parent){
         parentRect=getBoundingClientRect(parent)||null;
     } 
