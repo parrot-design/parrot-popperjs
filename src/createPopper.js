@@ -5,19 +5,14 @@ import orderModifiers from './util/orderModifiers';
 import getCompositeRect from './dom-utils/getCompositeRect';
 import getLayoutRect from './dom-utils/getLayoutRect';
 import getOffsetParent from './dom-utils/getOffsetParent';
+import areValidElements from './dom-utils/areValidElements';
 
 const DEFAULT_OPTIONS={
     placement:'bottom',
     modifiers:[],
     strategy:'absolute'
-}
-
-function areValidElements(
-    ...args
-){
-    return !args.some(element=>!(element && typeof element.getBoundingClientRect==='function'))
-}
-
+} 
+ 
 export function popperGenerator(generatorOptions={}){
     const {
         defaultModifiers=[],

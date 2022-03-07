@@ -13,6 +13,6 @@
     "strict": true, /* 启用严格模式 */   
     "jsx":"react"
   },
-  "include": ["src/index.ts"],
+  "include": ["src/index.js"],
   "exclude": ["node_modules", "dist"]
 }
