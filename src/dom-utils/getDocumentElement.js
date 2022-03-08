@@ -1,11 +1,14 @@
-import { isElement } from './instanceof';
+ 
+import { isElement } from './instanceOf'; 
 
 export default function getDocumentElement(
-    element
+  element 
 ) {
-    return (
-        (isElement(element)
-            ? element.ownerDocument
-            : element.document) || window.document
-    ).documentElement;
+  // $FlowFixMe[incompatible-return]: assume body is always available
+  return (
+    (isElement(element)
+      ? element.ownerDocument
+      : // $FlowFixMe[prop-missing]
+        element.document) || window.document
+  ).documentElement;
 }

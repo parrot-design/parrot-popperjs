@@ -1,79 +1,92 @@
+// @flow
 import getWindow from './getWindow';
-import { isHTMLElement } from './instanceof';
-import getComputedStyle from './getComputedStyle';
 import getNodeName from './getNodeName';
-import getParentNode from './getParentNode';
+import getComputedStyle from './getComputedStyle';
+import { isHTMLElement, isShadowRoot } from './instanceOf';
 import isTableElement from './isTableElement';
+import getParentNode from './getParentNode';
 
-function getTrueOffsetParent(element) {
-    if (
-        !isHTMLElement(element) ||
-        getComputedStyle(element).position === 'fixed'
-    ) {
-        return null;
-    }
-    return element.offsetParent;
-}
-
-//offsetParent在fixed元素中一直返回null 但是在absolute元素中返回其包含块
-function getContainingBlock(element) {
-    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
-    const isIE = navigator.userAgent.indexOf('Trident') !== -1;
-
-    if (isIE && isHTMLElement(element)) {
-        //在ie9、10和11中，包含块的固定元素总是由视口建立
-        const elementCss = getComputedStyle(element);
-        if (elementCss.position === 'fixed') {
-            return null;
-        }
-    }
-
-    let currentNode = getParentNode(element);
-
-    while (
-        isHTMLElement(currentNode) &&
-        ['html', 'body'].indexOf(getNodeName(currentNode)) < 0
-    ) {
-        const css = getComputedStyle(currentNode);
-        if (
-            css.transform !== 'none' ||
-            css.perspective !== 'none' ||
-            css.contain === 'paint' ||
-            ['transform', 'perspective'].indexOf(css.willChange) !== -1 ||
-            (isFirefox && css.willChange === 'filter') ||
-            (isFirefox && css.filter && css.filter !== 'none')
-        ) {
-            return currentNode;
-        } else {
-            currentNode = currentNode.parentNode;
-        }
-    }
-
+function getTrueOffsetParent(element){
+  if (
+    !isHTMLElement(element) ||
+    // https://github.com/popperjs/popper-core/issues/837
+    getComputedStyle(element).position === 'fixed'
+  ) {
     return null;
+  }
+
+  return element.offsetParent;
 }
 
-export default function getOffsetParent(element) {
+// `.offsetParent` reports `null` for fixed elements, while absolute elements
+// return the containing block
+function getContainingBlock(element) {
+  const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
+  const isIE = navigator.userAgent.indexOf('Trident') !== -1;
 
-    const window = getWindow(element);
-
-    let offsetParent = getTrueOffsetParent(element);
-
-    while (
-        offsetParent &&
-        isTableElement(offsetParent) &&
-        getComputedStyle(offsetParent).position === 'static'
-    ) {
-        offsetParent = getTrueOffsetParent(offsetParent);
+  if (isIE && isHTMLElement(element)) {
+    // In IE 9, 10 and 11 fixed elements containing block is always established by the viewport
+    const elementCss = getComputedStyle(element);
+    if (elementCss.position === 'fixed') {
+      return null;
     }
+  }
 
+  let currentNode = getParentNode(element);
+
+  if (isShadowRoot(currentNode)) {
+    currentNode = currentNode.host;
+  }
+
+  while (
+    isHTMLElement(currentNode) &&
+    ['html', 'body'].indexOf(getNodeName(currentNode)) < 0
+  ) {
+    const css = getComputedStyle(currentNode);
+
+    // This is non-exhaustive but covers the most common CSS properties that
+    // create a containing block.
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
     if (
-        offsetParent &&
-        (getNodeName(offsetParent) === 'html' ||
-            (getNodeName(offsetParent) === 'body' &&
-                getComputedStyle(offsetParent).position === 'static'))
+      css.transform !== 'none' ||
+      css.perspective !== 'none' ||
+      css.contain === 'paint' ||
+      ['transform', 'perspective'].indexOf(css.willChange) !== -1 ||
+      (isFirefox && css.willChange === 'filter') ||
+      (isFirefox && css.filter && css.filter !== 'none')
     ) {
-        return window;
+      return currentNode;
+    } else {
+      currentNode = currentNode.parentNode;
     }
+  }
 
-    return offsetParent || getContainingBlock(element) || window; 
+  return null;
+}
+
+// Gets the closest ancestor positioned element. Handles some edge cases,
+// such as table ancestors and cross browser bugs.
+export default function getOffsetParent(element) {
+  const window = getWindow(element);
+
+  let offsetParent = getTrueOffsetParent(element);
+
+  while (
+    offsetParent &&
+    isTableElement(offsetParent) &&
+    getComputedStyle(offsetParent).position === 'static'
+  ) {
+    offsetParent = getTrueOffsetParent(offsetParent);
+  }
+
+  if (
+    offsetParent &&
+    (getNodeName(offsetParent) === 'html' ||
+      (getNodeName(offsetParent) === 'body' &&
+        getComputedStyle(offsetParent).position === 'static'))
+  ) {
+    return window;
+  }
+
+  return offsetParent || getContainingBlock(element) || window;
 }

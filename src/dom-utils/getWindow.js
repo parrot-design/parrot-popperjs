@@ -1,12 +1,12 @@
-export default function getWindow(node){
-    if(node == null){
-        return window;
-    }
+export default function getWindow(node) {
+  if (node == null) {
+    return window;
+  }
 
-    if(node.toString()!=='[object Window]'){
-        const ownDocument=node.ownerDocument;
-        return ownDocument ? ownDocument.defaultView || window : window;
-    }
+  if (node.toString() !== '[object Window]') {
+    const ownerDocument = node.ownerDocument;
+    return ownerDocument ? ownerDocument.defaultView || window : window;
+  }
 
-    return node;
+  return node;
 }

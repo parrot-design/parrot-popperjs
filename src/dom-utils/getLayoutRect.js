@@ -1,11 +1,8 @@
-// @flow 
 import getBoundingClientRect from './getBoundingClientRect';
-import getOffsetParent from './getOffsetParent';
-import getScrollParent from './getScrollParent';
 
 // Returns the layout rect of an element relative to its offsetParent. Layout
 // means it doesn't take into account transforms.
-export default function getLayoutRect(element) {
+export default function getLayoutRect(element){
   const clientRect = getBoundingClientRect(element);
 
   // Use the clientRect sizes if it's not been transformed.
@@ -20,7 +17,6 @@ export default function getLayoutRect(element) {
   if (Math.abs(clientRect.height - height) <= 1) {
     height = clientRect.height;
   }
- 
 
   return {
     x: element.offsetLeft,

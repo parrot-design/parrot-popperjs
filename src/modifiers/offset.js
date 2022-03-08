@@ -1,51 +1,69 @@
+// @flow
+import type { Placement } from '../enums';
+import type { ModifierArguments, Modifier, Rect, Offsets } from '../types';
+import getBasePlacement from '../utils/getBasePlacement';
 import { top, left, right, placements } from '../enums';
-import getBasePlacement from '../util/getBasePlacement';
+
+// eslint-disable-next-line import/no-unused-modules
+export type OffsetsFunction = ({
+  popper: Rect,
+  reference: Rect,
+  placement: Placement,
+}) => [?number, ?number];
+
+type Offset = OffsetsFunction | [?number, ?number];
+
+// eslint-disable-next-line import/no-unused-modules
+export type Options = {
+  offset: Offset,
+};
 
 export function distanceAndSkiddingToXY(
-    placement,
-    rects,
-    offset
-) {
-    const basePlacement = getBasePlacement(placement);
-    const invertDistance = [left, top].indexOf(basePlacement) >= 0 ? -1 : 1;
+  placement: Placement,
+  rects: { popper: Rect, reference: Rect },
+  offset: Offset
+): Offsets {
+  const basePlacement = getBasePlacement(placement);
+  const invertDistance = [left, top].indexOf(basePlacement) >= 0 ? -1 : 1;
 
-    left[skidding, distance] = typeof offset === 'function' ? offset({
-        ...rects,
-        placement
-    }) : offset;
+  let [skidding, distance] =
+    typeof offset === 'function'
+      ? offset({
+          ...rects,
+          placement,
+        })
+      : offset;
 
-    skidding = skidding || 0;
-    distance = (distance || 0) * invertDistance;
+  skidding = skidding || 0;
+  distance = (distance || 0) * invertDistance;
 
-    return [left, right].indexOf(basePlacement) >= 0
-        ? { x: distance, y: skidding }
-        : { x: skidding, y: distance }
+  return [left, right].indexOf(basePlacement) >= 0
+    ? { x: distance, y: skidding }
+    : { x: skidding, y: distance };
 }
 
-function offset({ state, options, name }) {
-    const { offset = [0, 0] } = options;
+function offset({ state, options, name }: ModifierArguments<Options>) {
+  const { offset = [0, 0] } = options;
 
-    const data = placements.reduce((acc, placement) => {
-        acc[placement] = distanceAndSkiddingToXY(placement, state.rects, offset);
-        return acc;
-    }, {});
+  const data = placements.reduce((acc, placement) => {
+    acc[placement] = distanceAndSkiddingToXY(placement, state.rects, offset);
+    return acc;
+  }, {});
 
+  const { x, y } = data[state.placement];
 
-    const { x, y } = data[state.placement];
+  if (state.modifiersData.popperOffsets != null) {
+    state.modifiersData.popperOffsets.x += x;
+    state.modifiersData.popperOffsets.y += y;
+  }
 
-    if (state.modifiersData.popperOffsets != null) {
-        state.modifiersData.popperOffsets.x += x;
-        state.modifiersData.popperOffsets.y += y;
-    }
-
-    state.modifiersData[name] = data;
+  state.modifiersData[name] = data;
 }
-
-
+ 
 export default ({
-    name: 'offset',
-    enabled: true,
-    phase: 'main',
-    requires: ['popperOffsets'],
-    fn: offset
-})
+  name: 'offset',
+  enabled: true,
+  phase: 'main',
+  requires: ['popperOffsets'],
+  fn: offset,
+});

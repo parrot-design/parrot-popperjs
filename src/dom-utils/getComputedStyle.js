@@ -1,7 +1,8 @@
-import getWindow from './getWindow'
+ 
+import getWindow from './getWindow';
 
 export default function getComputedStyle(
-    element
+  element
 ){
-    return getWindow(element).getComputedStyle(element);
+  return getWindow(element).getComputedStyle(element);
 }

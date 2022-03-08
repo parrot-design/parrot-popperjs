@@ -64,7 +64,7 @@ export { createPopper } from './popper';
 
 ```js
 import { popperGenerator } from './createPopper'
-//这里官方称之为装饰器 计算位置，设置样式都由此的基础函数功能实现，这里我们后期会讲到
+//这里为装饰器的集合 装饰器的作用是计算位置、设置样式等这里我们后期会讲到
 const defaultModifiers=[
   ...
 ];
@@ -98,7 +98,7 @@ export function popperGenerator(generatorOptions={}){
   	const {
       defaultModifiers=[],
       defaultOptions=DEFAULT_OPTIONS
-    }=generator
+    }=generatorOptions;
     
     return function createPopper(
     		reference,

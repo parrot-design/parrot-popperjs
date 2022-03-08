@@ -1,88 +1,96 @@
- 
-import isHTMLElement from '../util/isHTMLElement'
+// @flow
+import type { Modifier, ModifierArguments } from '../types';
+import getNodeName from '../dom-utils/getNodeName';
+import { isHTMLElement } from '../dom-utils/instanceOf';
 
-function applyStyles({state}){
-    Object.keys(state.elements).forEach((name)=>{
-        const style = state.styles[name] || {};
+// This modifier takes the styles prepared by the `computeStyles` modifier
+// and applies them to the HTMLElements such as popper and arrow
 
-        const attributes = state.attributes[name] || {};
-        const element = state.elements[name];
+function applyStyles({ state }: ModifierArguments<{||}>) {
+  Object.keys(state.elements).forEach((name) => {
+    const style = state.styles[name] || {};
 
-        if(!isHTMLElement(element)){
-            return ;
-        }
+    const attributes = state.attributes[name] || {};
+    const element = state.elements[name];
 
-        Object.assign(element.style,style); 
+    // arrow is optional + virtual elements
+    if (!isHTMLElement(element) || !getNodeName(element)) {
+      return;
+    }
 
-        Object.keys(attributes).forEach((name)=>{
-            const value=attributes[name];
-            if(value===false){
-                element.removeAttribute(name);
-            }else{
-                element.setAttribute(name,value===true?'':value);
-            }
-        });
+    // Flow doesn't support to extend this property, but it's the most
+    // effective way to apply styles to an HTMLElement
+    // $FlowFixMe[cannot-write]
+    Object.assign(element.style, style);
+
+    Object.keys(attributes).forEach((name) => {
+      const value = attributes[name];
+      if (value === false) {
+        element.removeAttribute(name);
+      } else {
+        element.setAttribute(name, value === true ? '' : value);
+      }
     });
+  });
+}
+
+function effect({ state }: ModifierArguments<{||}>) {
+  const initialStyles = {
+    popper: {
+      position: state.options.strategy,
+      left: '0',
+      top: '0',
+      margin: '0',
+    },
+    arrow: {
+      position: 'absolute',
+    },
+    reference: {},
+  };
+
+  Object.assign(state.elements.popper.style, initialStyles.popper);
+  state.styles = initialStyles;
+
+  if (state.elements.arrow) {
+    Object.assign(state.elements.arrow.style, initialStyles.arrow);
+  }
+
+  return () => {
+    Object.keys(state.elements).forEach((name) => {
+      const element = state.elements[name];
+      const attributes = state.attributes[name] || {};
+
+      const styleProperties = Object.keys(
+        state.styles.hasOwnProperty(name)
+          ? state.styles[name]
+          : initialStyles[name]
+      );
+
+      // Set all values to an empty string to unset them
+      const style = styleProperties.reduce((style, property) => {
+        style[property] = '';
+        return style;
+      }, {});
+
+      // arrow is optional + virtual elements
+      if (!isHTMLElement(element) || !getNodeName(element)) {
+        return;
+      }
+
+      Object.assign(element.style, style);
+
+      Object.keys(attributes).forEach((attribute) => {
+        element.removeAttribute(attribute);
+      });
+    });
+  };
 }
  
-//在第一次更新前执行effect
-function effect({state}){
-    const initialStyles={
-        popper:{
-            position:state.options.strategy,
-            left:'0',
-            top:'0',
-            margin:'0'
-        },
-        arrow:{
-            position:'absolute'
-        },
-        reference:{}
-    };
-
-    //合并popperstyle
-    Object.assign(state.elements.popper.style,initialStyles.popper);
-    state.styles=initialStyles;
-
-    //有arrow 合并arrowstyle
-    if(state.elements.arrow){
-        Object.assign(state.elements.arrow.style,initialStyles.arrow);
-    }
-
-    return ()=>{
-        Object.keys(state.elements).forEach((name)=>{
-            const element=state.elements[name];
-            const attributes=state.attributes[name]||{};
-
-            const styleProperties=Object.keys(
-                state.styles.hasOenProperty(name)
-                    ? state.styles[name]
-                    : initialStyles[name]
-            );
-
-            const styles=styleProperties.reduce((style,property)=>{
-                style[property]='';
-                return style;
-            },{});
-
-            if(!isHTMLElement(element)){
-                return ;
-            }
-
-            Object.assign(element.style,styles);
-
-            Object.keys(attributes).forEach((attribute)=>{
-                element.removeAttribute(attribute);
-            })
-        })
-    }
-}
-
 export default {
-    name:'applyStyles',
-    enabled:true,
-    phase:'write',
-    fn:applyStyles,
-    effect:effect,
-    requires:['computeStyles']
-}
+  name: 'applyStyles',
+  enabled: true,
+  phase: 'write',
+  fn: applyStyles,
+  effect,
+  requires: ['computeStyles'],
+};
