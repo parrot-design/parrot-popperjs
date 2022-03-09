@@ -3,7 +3,7 @@ import pkg from './package.json'
 import { terser } from 'rollup-plugin-terser'
 
 export default {
-    input: 'src/index.ts', // 入口文件
+    input: 'src/index.js', // 入口文件
     output: [
         {
             file: pkg.main, // 输出文件名称

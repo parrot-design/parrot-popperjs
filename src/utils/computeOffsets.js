@@ -2,7 +2,7 @@
 import getBasePlacement from './getBasePlacement';
 import getVariation from './getVariation';
 import getMainAxisFromPlacement from './getMainAxisFromPlacement';
-import { top, right, bottom, left, start, end, type Placement } from '../enums';
+import { top, right, bottom, left, start, end } from '../enums';
 
 export default function computeOffsets({
   reference,

@@ -1,6 +1,4 @@
-// @flow
-import type { Modifier, ModifierArguments, Padding, Rect } from '../types';
-import type { Placement } from '../enums';
+ 
 import getBasePlacement from '../utils/getBasePlacement';
 import getLayoutRect from '../dom-utils/getLayoutRect';
 import contains from '../dom-utils/contains';
@@ -11,19 +9,7 @@ import mergePaddingObject from '../utils/mergePaddingObject';
 import expandToHashMap from '../utils/expandToHashMap';
 import { left, right, basePlacements, top, bottom } from '../enums';
 import { isHTMLElement } from '../dom-utils/instanceOf';
-
-// eslint-disable-next-line import/no-unused-modules
-export type Options = {
-  element: HTMLElement | string | null,
-  padding:
-    | Padding
-    | (({|
-        popper: Rect,
-        reference: Rect,
-        placement: Placement,
-      |}) => Padding),
-};
-
+ 
 const toPaddingObject = (padding, state) => {
   padding =
     typeof padding === 'function'
@@ -37,7 +23,7 @@ const toPaddingObject = (padding, state) => {
   );
 };
 
-function arrow({ state, name, options }: ModifierArguments<Options>) {
+function arrow({ state, name, options }) {
   const arrowElement = state.elements.arrow;
   const popperOffsets = state.modifiersData.popperOffsets;
   const basePlacement = getBasePlacement(state.placement);
@@ -78,14 +64,14 @@ function arrow({ state, name, options }: ModifierArguments<Options>) {
   const offset = within(min, center, max);
 
   // Prevents breaking syntax highlighting...
-  const axisProp: string = axis;
+  const axisProp = axis;
   state.modifiersData[name] = {
     [axisProp]: offset,
     centerOffset: offset - center,
   };
 }
 
-function effect({ state, options }: ModifierArguments<Options>) {
+function effect({ state, options }) {
   let { element: arrowElement = '[data-popper-arrow]' } = options;
 
   if (arrowElement == null) {
@@ -128,9 +114,7 @@ function effect({ state, options }: ModifierArguments<Options>) {
 
   state.elements.arrow = arrowElement;
 }
-
-// eslint-disable-next-line import/no-unused-modules
-export type ArrowModifier = Modifier<'arrow', Options>;
+ 
 export default ({
   name: 'arrow',
   enabled: true,
@@ -139,4 +123,4 @@ export default ({
   effect,
   requires: ['popperOffsets'],
   requiresIfExists: ['preventOverflow'],
-}: ArrowModifier);
+});
