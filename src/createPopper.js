@@ -68,8 +68,7 @@ export function popperGenerator(generatorOptions = {}) {
 
         cleanupModifierEffects();
 
-        state.options = {
-          // $FlowFixMe[exponential-spread]
+        state.options = { 
           ...defaultOptions,
           ...state.options,
           ...options,
@@ -77,9 +76,7 @@ export function popperGenerator(generatorOptions = {}) {
 
         state.scrollParents = {
           reference: isElement(reference)
-            ? listScrollParents(reference)
-            : reference.contextElement
-            ? listScrollParents(reference.contextElement)
+            ? listScrollParents(reference) 
             : [],
           popper: listScrollParents(popper),
         };
